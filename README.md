@@ -1,2 +1,2 @@
-# edge
- edge game clone in Unity
+# EDGE
+ ![iddqd](/readme/edgemovement.gif")
