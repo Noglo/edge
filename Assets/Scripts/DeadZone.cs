@@ -6,7 +6,7 @@ public class DeadZone : MonoBehaviour
 {
     public CanvasGroup UI;
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         Camera.main.transform.GetComponent<CameraFollow>().enabled = false;
         ShowUI();
@@ -14,7 +14,9 @@ public class DeadZone : MonoBehaviour
 
     private void ShowUI()
     {
-        UI.alpha = Mathf.Lerp(0f, 1f, 15 * Time.deltaTime);
+        UI.alpha = 1f;
+        UI.interactable = !UI.interactable;
+        UI.blocksRaycasts = !UI.blocksRaycasts;
     }
 
     public void ReloadScene()

@@ -71,7 +71,7 @@ public class PlayerMovement : MonoBehaviour
     private bool Raycasting(Vector3 direction)
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, direction, out hit, .5f, LayerMask.GetMask("Default")))
+        if (Physics.Raycast(transform.position, direction, out hit, 1f, LayerMask.GetMask("Default")))
         {
 #if UNITY_EDITOR
             Debug.DrawRay(transform.position, direction * 2, Color.red);
@@ -90,7 +90,7 @@ public class PlayerMovement : MonoBehaviour
     private bool RaycastingClimbing(Vector3 direction)
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position + Vector3.up, direction, out hit, .5f, LayerMask.GetMask("Default")))
+        if (Physics.Raycast(transform.position + Vector3.up, direction, out hit, 1, LayerMask.GetMask("Default")))
         {
 #if UNITY_EDITOR
             Debug.DrawRay(transform.position + Vector3.up, direction * 2, Color.yellow);
