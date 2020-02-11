@@ -13,9 +13,9 @@ public class MovingPlatform : MonoBehaviour
     public Transform[] wayPoints;
 
     [Header("Movement")]
-    public PlatformType type;
+    public PlatformType Type;
     [SerializeField] private float speed = 10f;
-    [SerializeField] private float timeDelay;
+    [SerializeField] private float timeDelay = 2f;
 
     [Header ("Gizmos")]
     [SerializeField] private float sphRadius = 1f;
@@ -24,7 +24,7 @@ public class MovingPlatform : MonoBehaviour
     private Vector3 nextPos;
     private int wayDir;
     private int curPointNum;
-    private bool playerOn;
+    private bool onPlatform;
 
     void Start(){
         transform.position = wayPoints[0].position;
@@ -33,7 +33,7 @@ public class MovingPlatform : MonoBehaviour
     void Update()
     {
         SetNextPos();
-        if (type == PlatformType.Endless){
+        if (Type == PlatformType.Endless){
             EndlessMove();
         }
         else{
@@ -42,7 +42,14 @@ public class MovingPlatform : MonoBehaviour
     }
 
     void FixedUpdate() {
-        PlayerOnPlatform();
+        if (timer >= timeDelay)
+        {
+            PlayerOnPlatform();
+        }
+        else
+        {
+            timer += Time.deltaTime;
+        }
     }
 
 #if UNITY_EDITOR
@@ -58,26 +65,29 @@ public class MovingPlatform : MonoBehaviour
     }
 #endif
 
-    private void SetNextPos(){ // Возвращает следующий пункт.
+    private void SetNextPos(){ // Присваивает nextPos позицию следующего пункта.
         if (transform.position == wayPoints[0].position && nextPos != wayPoints[1].position){
             nextPos = wayPoints[1].position;
             curPointNum = 1;
             wayDir = 1;
+            onPlatform = false;
             timer = 0;
-            playerOn = false;
         }
         else if (transform.position == wayPoints[wayPoints.Length - 1].position && nextPos != wayPoints[wayPoints.Length - 2].position){
             nextPos = wayPoints[curPointNum - 1].position;
             curPointNum = wayPoints.Length - 2;
             wayDir = -1;
+            onPlatform = false;
             timer = 0;
-            playerOn = false;
 
         }
         else if(transform.position == wayPoints[curPointNum].position && (nextPos != wayPoints[curPointNum + 1].position || nextPos != wayPoints[curPointNum - 1].position)){
             curPointNum += wayDir;
             nextPos = wayPoints[curPointNum].position;
-            timer = 0;
+            if (Type == PlatformType.Endless)
+            {
+                timer = 0;
+            }
         }
     }
 
@@ -92,7 +102,7 @@ public class MovingPlatform : MonoBehaviour
     }
 
     private void OnInteractMove(){ // Движение для платформы, реагирующей на воздействие игрока.
-        if (playerOn){
+        if (onPlatform){
             transform.position = Vector3.MoveTowards(transform.position, nextPos, speed * Time.deltaTime);
         }
     }
@@ -101,7 +111,7 @@ public class MovingPlatform : MonoBehaviour
         RaycastHit hit;
         if (Physics.BoxCast(transform.position, transform.lossyScale * 0.4f, transform.up, out hit, transform.rotation, transform.lossyScale.y * 1.3f)){
             if (hit.collider.CompareTag("Player")){
-                playerOn = true;
+                onPlatform = true;
             }
         }
     }
